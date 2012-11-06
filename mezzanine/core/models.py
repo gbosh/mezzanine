@@ -140,15 +140,19 @@ class MetaData(models.Model):
         field.
         """
         description = ""
+        # Try to generate from content before anything else
+        if hasattr(self, 'content'):
+            description = self.content
         # Use the first RichTextField, or TextField if none found.
-        for field_type in (RichTextField, models.TextField):
-            if not description:
-                for field in self._meta.fields:
-                    if isinstance(field, field_type) and \
-                        field.name != "description":
-                        description = getattr(self, field.name)
-                        if description:
-                            break
+        if not description:
+            for field_type in (RichTextField, models.TextField):
+                if not description:
+                    for field in self._meta.fields:
+                        if isinstance(field, field_type) and \
+                            field.name != "description":
+                            description = getattr(self, field.name)
+                            if description:
+                                break
         # Fall back to the title if description couldn't be determined.
         if not description:
             description = unicode(self)
