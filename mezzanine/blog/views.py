@@ -1,7 +1,7 @@
 from calendar import month_name
 from collections import defaultdict
 
-from django.http import Http404
+from django.http import Http404, HttpResponsePermanentRedirect
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
@@ -12,6 +12,7 @@ from mezzanine.blog.feeds import PostsRSS, PostsAtom
 from mezzanine.conf import settings
 from mezzanine.generic.models import AssignedKeyword, Keyword
 from mezzanine.utils.views import render, paginate
+from django.core.urlresolvers import reverse
 
 
 def blog_post_list(request, tag=None, year=None, month=None, username=None,
@@ -41,6 +42,10 @@ def blog_post_list(request, tag=None, year=None, month=None, username=None,
     author = None
     if username is not None:
         author = get_object_or_404(User, username=username)
+        reverse_url = reverse('mezzanine.blog.views.blog_post_list',
+                              kwargs={'username':author.username})
+        if request.path != reverse_url:
+            return HttpResponsePermanentRedirect(reverse_url)
         blog_posts = blog_posts.filter(user=author)
         templates.append(u"blog/blog_post_list_%s.html" % username)
 
