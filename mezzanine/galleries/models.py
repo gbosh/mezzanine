@@ -1,3 +1,5 @@
+from filebrowser_safe.views import filebrowser_post_rename
+from filebrowser_safe import settings as filebrowser_settings
 
 from cStringIO import StringIO
 import os
@@ -8,6 +10,7 @@ from zipfile import ZipFile
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db import models
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
 from mezzanine.conf import settings
@@ -114,3 +117,12 @@ class GalleryImage(Orderable):
                             for i, s in enumerate(name)])
             self.description = name
         super(GalleryImage, self).save(*args, **kwargs)
+
+
+@receiver(filebrowser_post_rename)
+def on_filebrowser_image_renamed(sender, **kwargs):
+    old_file = "%s%s" % (GALLERIES_UPLOAD_DIR, kwargs['filename'])
+    new_file = "%s%s" % (GALLERIES_UPLOAD_DIR, kwargs['new_filename'])
+    for gallery_image in GalleryImage.objects.filter(file=old_file):
+        gallery_image.file = new_file
+        gallery_image.save()
