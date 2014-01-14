@@ -38,7 +38,7 @@ if (typeof tinyMCE != 'undefined') {
         accessibility_warnings : false,
         object_resizing: false,
         //cleanup: false, // SETTING THIS TO FALSE WILL BREAK EMBEDDING YOUTUBE VIDEOS
-        forced_root_block: "p",
+        forced_root_block: "",
         remove_trailing_nbsp: true,
 
         // callbackss
@@ -69,7 +69,10 @@ if (typeof tinyMCE != 'undefined') {
         paste_auto_cleanup_on_paste : true,
         paste_remove_styles: true,
         paste_remove_styles_if_webkit: true,
-        paste_strip_class_attributes: true
+        paste_strip_class_attributes: true,
+
+        // don't strip anything since this is handled by bleach
+        valid_elements : "*[*]"
 
 	});
 
