@@ -121,8 +121,18 @@ class GalleryImage(Orderable):
 
 @receiver(filebrowser_post_rename)
 def on_filebrowser_image_renamed(sender, **kwargs):
-    old_file = "%s%s" % (GALLERIES_UPLOAD_DIR, kwargs['filename'])
-    new_file = "%s%s" % (GALLERIES_UPLOAD_DIR, kwargs['new_filename'])
-    for gallery_image in GalleryImage.objects.filter(file=old_file):
-        gallery_image.file = new_file
-        gallery_image.save()
+    base = GALLERIES_UPLOAD_DIR
+    if kwargs['path'] != '':
+        base = "%s%s/" % (base, kwargs['path'])
+    old_file = "%s%s" % (base, kwargs['filename'])
+    new_file = "%s%s" % (base, kwargs['new_filename'])
+    if os.path.isdir("%s/%s" % (settings.MEDIA_ROOT, new_file)):
+        for gallery_image in GalleryImage.objects.filter(file__startswith=old_file):
+            gallery_new_file = gallery_image.file.path\
+                                            .replace(old_file, new_file, 1)
+            gallery_image.file = gallery_new_file
+            gallery_image.save()
+    else:
+        for gallery_image in GalleryImage.objects.filter(file=old_file):
+            gallery_image.file = new_file
+            gallery_image.save()
