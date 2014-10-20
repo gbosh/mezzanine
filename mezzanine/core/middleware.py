@@ -11,7 +11,7 @@ from mezzanine.conf import settings
 from mezzanine.utils.cache import (cache_key_prefix, nevercache_token,
                                    cache_get, cache_set, cache_installed)
 from mezzanine.utils.device import templates_for_device
-from mezzanine.utils.sites import templates_for_host
+from mezzanine.utils.sites import current_site_id, templates_for_host
 
 
 _deprecated = {
