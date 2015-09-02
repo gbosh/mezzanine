@@ -34,8 +34,13 @@ def blog_post_list(request, tag=None, year=None, month=None, username=None,
         if month is not None:
             blog_posts = blog_posts.filter(publish_date__month=month)
             month = month_name[int(month)]
+
     if category is not None:
         category = get_object_or_404(BlogCategory, slug=category)
+        reverse_url = reverse('mezzanine.blog.views.blog_post_list',
+                              kwargs={'category':category.slug})
+        if request.path != reverse_url:
+            return HttpResponsePermanentRedirect(reverse_url)
         blog_posts = blog_posts.filter(categories=category)
         templates.append(u"blog/blog_post_list_%s.html" %
                           unicode(category.slug))
