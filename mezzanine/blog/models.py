@@ -61,6 +61,9 @@ class BlogPost(Displayable, Ownable, RichText, AdminThumbMixin):
     def category_list(self):
         return getattr(self, "_categories", self.categories.all())
 
+    def category(self):
+        return ''.join([i.slug + ', ' for i in self.category_list()])[:-2]
+
     def keyword_list(self):
         try:
             return self._keywords

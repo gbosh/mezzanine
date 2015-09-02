@@ -13,7 +13,7 @@ blogpost_fieldsets = deepcopy(DisplayableAdmin.fieldsets)
 blogpost_fieldsets[0][1]["fields"].insert(1, "user")
 blogpost_fieldsets[0][1]["fields"].insert(1, "categories")
 blogpost_fieldsets[0][1]["fields"].extend(["content", "allow_comments"])
-blogpost_list_display = ["title", "user", "status", "admin_link"]
+blogpost_list_display = ["title", "user", "category", "status", "admin_link"]
 if settings.BLOG_USE_FEATURED_IMAGE:
     blogpost_fieldsets[0][1]["fields"].insert(-2, "featured_image")
     blogpost_list_display.insert(0, "admin_thumb")
